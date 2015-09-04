@@ -20,7 +20,7 @@ class twitchchat:
         self.sock.send(str.encode("".join(["JOIN ", channel, "\r\n"])))
 
     def sendmsg(self, msg):
-        self.sock.send(str.encode("".join(["PRIVMSG ", self.channel, " :", msg, "\r\n"])))
+        self.sock.send("".join(["PRIVMSG ", self.channel, " :", msg, "\r\n"]).encode())
 
     def recvselect(self, timeout):
         return select.select([self.sock],[],[], timeout)
@@ -48,8 +48,7 @@ class twitchchat:
             else:
                 match = re.search("PING", inp)
                 if(match):
-                    self.sock.send(str.encode(inp.replace("PING","PONG")))
-                    print("Responded to ping!")
+                    self.sock.send(inp.replace("PING","PONG").encode())
     
     def parsecommand(self, command, username):
         match = re.search("!.+[^\s]", command)
