@@ -23,15 +23,16 @@ GPIO.output(11, GPIO.HIGH)	# *unicode shrug*
 
 GPIO.setup(13, GPIO.OUT)
 GPIO.output(11,GPIO.HIGH)
-for i in range(3000):
+
+for i in range(300):
 	GPIO.output(13, GPIO.HIGH)
-	time.sleep(0.001)
+	time.sleep(0.005)
 
 	GPIO.output(13, GPIO.LOW)
-	time.sleep(0.001)
+	time.sleep(0.005)
 
 GPIO.output(11,GPIO.LOW)
-for i in range(3000):
+for i in range(300):
 	GPIO.output(13, GPIO.HIGH)
 	time.sleep(0.001)
 
