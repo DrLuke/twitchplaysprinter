@@ -45,6 +45,11 @@ class twitchchat:
                 message = match.group(4)
 
                 self.parsecommand(message, username)
+            else:
+                match = re.search("PING", inp)
+                if(match):
+                    self.sock.send(str.encode(inp.replace("PING","PONG")))
+                    print("Responded to ping!")
     
     def parsecommand(self, command, username):
         match = re.search("!.+[^\s]", command)
