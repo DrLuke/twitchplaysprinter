@@ -6,20 +6,20 @@ feedenable = 7
 feeddir = 11
 feedstep = 13
 
-# Pin numbers for drawing axis
+# Defs for drawing axis
 linearenable = 15
 lineardir = 12
 linearstep = 16
 linearleft = GPIO.LOW
 linearright = GPIO.HIGH
+stepintegrator = 0
 
 # Printig defs
 linewidth = 2   # in feed-steps
 maxaspect = 1.4   # height/width
 
 # Servo defs
-servopin = 18
-servo = None	# Declare as global variable
+servopin = 26
 
 
 def main():
@@ -33,15 +33,18 @@ def main():
     GPIO.setup(lineardir, GPIO.OUT)
     GPIO.setup(linearstep, GPIO.OUT)
 
+    GPIO.setup(servopin, GPIO.OUT)
+
     # Enable Stepper drivers
     GPIO.output(feedenable, GPIO.LOW)
     GPIO.output(linearenable, GPIO.LOW)
     
     # Set Feed direction
-    GPIO.output(feeddir, GPIO.LOW)
+    GPIO.output(feeddir, GPIO.HIGH)
     
     # Start servo PWM
-    servo = GPIO.PWM(servopin, 50)  # 50Hz
+    servo = GPIO.PWM(servopin, 100.0)  # 50Hz
+    servo.start(5)
 
     """if(len(sys.argv) != 2):
         return 2
@@ -56,11 +59,15 @@ def main():
         return 1
     else:
         return 0"""
-    setservo(0)
-    feed(10)
-    setservo(90)
+    servo.ChangeDutyCycle(15.0)
+    time.sleep(2)
+    #feed(10)
+    servo.ChangeDutyCycle(30.0)
     linear(3000, linearleft)
-    setservo(180
+    feed(10)
+    linear(3000, linearleft)
+    servo.ChangeDutyCycle(15.0)
+    time.sleep(2)
     return 0
 
     
@@ -88,15 +95,11 @@ def linear(steps, direction):
         GPIO.output(linearstep, GPIO.LOW)
         time.sleep(0.0004)
 
-def setservo(angle):
-    angle = max(min(180, angle), 0)
-    servo.start(angle/360 + 5)
+def setservo(servo, angle):
+    servo.ChangeDutyCycle(angle)
 
 if(__name__ == "__main__"):
-    try:
-        main()
-    except:
-        print(sys.exc_info()[0])
+    main()
     GPIO.setmode(GPIO.BOARD)
     GPIO.cleanup()
  
