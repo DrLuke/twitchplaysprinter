@@ -35,7 +35,7 @@ def main():
     # Set Feed direction
     GPIO.output(feeddir, GPIO.LOW)
 
-    if(len(sys.argv) != 2):
+    """if(len(sys.argv) != 2):
         return 2
 
     # Open job file
@@ -47,9 +47,10 @@ def main():
     if(processjob(job)):
         return 1
     else:
-        feed(10)
-        linear(30, linearright)
-        return 0
+        return 0"""
+    feed(10)
+    linear(30, linearright)
+    return 0
 
     
 def processjob(job):
