@@ -7,9 +7,9 @@ feeddir = 11
 feedstep = 13
 
 # Pin numbers for drawing axis
-linearenable = 0
-lineardir = 0
-linearstep = 0
+linearenable = 15
+lineardir = 12
+linearstep = 16
 linearleft = GPIO.HIGH
 linearright = GPIO.LOW
 
