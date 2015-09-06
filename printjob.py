@@ -17,6 +17,12 @@ linearright = GPIO.HIGH
 linewidth = 2   # in feed-steps
 maxaspect = 1.4   # height/width
 
+# Servo defs
+servopin = 0
+servo = GPIO.PWM(servopin, 50)  # 50Hz
+
+
+
 def main():
     GPIO.setmode(GPIO.BOARD)
     # Setup pins
@@ -77,8 +83,15 @@ def linear(steps, direction):
         GPIO.output(linearstep, GPIO.LOW)
         time.sleep(0.0004)
 
+def setservo(angle):
+    angle = max(min(180, angle), 0)
+    print(angle)
+
 if(__name__ == "__main__"):
     try:
+        setservo(50)
+        setservo(-30)
+        setservo(190)
         main()
     except:
         print(sys.exc_info()[0])
