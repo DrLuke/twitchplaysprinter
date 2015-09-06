@@ -20,6 +20,8 @@ maxaspect = 1.4   # height/width
 
 # Servo defs
 servopin = 26
+servodown = 30.0
+servoup = 15.0
 
 
 def main():
@@ -44,9 +46,9 @@ def main():
     
     # Start servo PWM
     servo = GPIO.PWM(servopin, 100.0)  # 50Hz
-    servo.start(5)
+    servo.start(servoup)
 
-    """if(len(sys.argv) != 2):
+    if(len(sys.argv) != 2):
         return 2
 
     # Open job file
@@ -58,16 +60,16 @@ def main():
     if(processjob(job)):
         return 1
     else:
-        return 0"""
-    servo.ChangeDutyCycle(15.0)
-    time.sleep(2)
+        return 0
+    #servo.ChangeDutyCycle(15.0)
+    #time.sleep(2)
     #feed(10)
-    servo.ChangeDutyCycle(30.0)
-    linear(3000, linearleft)
-    feed(10)
-    linear(3000, linearleft)
-    servo.ChangeDutyCycle(15.0)
-    time.sleep(2)
+    #servo.ChangeDutyCycle(30.0)
+    #linear(3000, linearleft)
+    #feed(10)
+    #linear(3000, linearleft)
+    #servo.ChangeDutyCycle(15.0)
+    #time.sleep(2)
     return 0
 
     
@@ -76,7 +78,8 @@ def processjob(job):
     ylen = job.shape[0]
     np.flipud(job)
 
-     
+    for row in job:
+        print(row)
 
     return 1
    
@@ -94,9 +97,6 @@ def linear(steps, direction):
         time.sleep(0.0004)
         GPIO.output(linearstep, GPIO.LOW)
         time.sleep(0.0004)
-
-def setservo(servo, angle):
-    servo.ChangeDutyCycle(angle)
 
 if(__name__ == "__main__"):
     main()
