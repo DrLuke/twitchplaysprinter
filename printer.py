@@ -22,7 +22,7 @@ class printer:
                         os.rename("new/"+self.currentjob, "old/"+self.currentjob)
                         # Move jobfile from new/ to old/
                     elif(self.subprocess.returncode == 1):
-                        pass
+                        os.rename("new/"+self.currentjob, "error/"+self.currentjob)
                         # Move jobfile from new/ to error/
                     else:
                         print("Unknown return code: " + str(self.currentjob.returncode))

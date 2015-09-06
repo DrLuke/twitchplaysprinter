@@ -14,7 +14,9 @@ def main():
 
     while(1):
         irc.parse(bytes.decode(irc.recv()))
-        #pri.work()
+        if(not irc.valid):
+            irc = twitchchat("drluke4", "oauth:vb6vffy4rqtvon9izfi928g3yoytd1", "#drluke4")
+        pri.work()
 
 def testcallback(args):
     a = subprocess.Popen(["python", "steppertest.py"], stdout=subprocess.PIPE)

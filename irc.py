@@ -4,6 +4,8 @@ import socket, select, re
 
 class twitchchat:
     def __init__(self, nick, oauth, channel):
+        self.valid = False
+
         self.server = "irc.twitch.tv"
         self.port = 6667
         self.nick = nick
@@ -14,6 +16,8 @@ class twitchchat:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((self.server, self.port))
         
+        self.valid = True
+
         self.sock.send(str.encode("".join(["PASS ", oauth, "\r\n"])))
         self.sock.send(str.encode("".join(["USER ", nick, " 0 * : DrLuke", "\r\n"])))
         self.sock.send(str.encode("".join(["NICK ", nick, "\r\n"])))
@@ -30,6 +34,8 @@ class twitchchat:
         contrecv = bool(self.recvselect(0)[0])
         while(contrecv):
             buf = self.sock.recv(4096)
+            if(len(buf) == 0):
+                self.valid = False
             if(len(buf) < 4096 and not bool(self.recvselect(0)[0])):    #check if there's more to receive 
                 contrecv = False
             out += buf
@@ -39,7 +45,7 @@ class twitchchat:
         for line in inp.splitlines():
             match = re.search("".join([":(.+)!(.+) PRIVMSG (", self.channel, ") :(.+)"]), inp)
             if(match):
-                print("".join([match.group(1), " in ", match.group(3), " wrote: ", match.group(4)]))
+                #print("".join([match.group(1), " in ", match.group(3), " wrote: ", match.group(4)]))
                 username = match.group(1)
                 channel = match.group(3)
                 message = match.group(4)

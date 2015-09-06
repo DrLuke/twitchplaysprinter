@@ -45,19 +45,22 @@ class bot:
             return None
 
     def determinehighestseqnum(self):
-        filenames = []
-        for (dirp, dirn, fn) in os.walk("new"):
-            filenames += fn
-            break
+        try:
+            filenames = []
+            for (dirp, dirn, fn) in os.walk("new"):
+                filenames += fn
+                break
 
-        for (dirp, dirn, fn) in os.walk("old"):
-            filenames += fn
-            break
+            for (dirp, dirn, fn) in os.walk("old"):
+                filenames += fn
+                break
 
-        nums = []
-        for filename in filenames:
-            nums.append(int(re.findall("([\d]*)_",filename)[0]))
-        bot.sequentialfileid = max(nums)+1
+            nums = []
+            for filename in filenames:
+                nums.append(int(re.findall("([\d]*)_",filename)[0]))
+            bot.sequentialfileid = max(nums)+1
+        except:
+            bot.sequentialfileid = 0
 
     def helpcallback(self, args):
         helpdict = {}
