@@ -18,7 +18,7 @@ linewidth = 2   # in feed-steps
 maxaspect = 1.4   # height/width
 
 # Servo defs
-servopin = 12
+servopin = 18
 servo = None	# Declare as global variable
 
 
@@ -56,8 +56,11 @@ def main():
         return 1
     else:
         return 0"""
+    setservo(0)
     feed(10)
-    linear(3000, linearright)
+    setservo(90)
+    linear(3000, linearleft)
+    setservo(180
     return 0
 
     
@@ -87,6 +90,7 @@ def linear(steps, direction):
 
 def setservo(angle):
     angle = max(min(180, angle), 0)
+    servo.start(angle/360 + 5)
 
 if(__name__ == "__main__"):
     try:
