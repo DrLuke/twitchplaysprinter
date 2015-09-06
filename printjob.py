@@ -10,8 +10,8 @@ feedstep = 13
 linearenable = 15
 lineardir = 12
 linearstep = 16
-linearleft = GPIO.HIGH
-linearright = GPIO.LOW
+linearleft = GPIO.LOW
+linearright = GPIO.HIGH
 
 # Printig defs
 linewidth = 2   # in feed-steps
@@ -20,7 +20,7 @@ maxaspect = 1.4   # height/width
 def main():
     GPIO.setmode(GPIO.BOARD)
     # Setup pins
-    GPIO.setup(feedenable. GPIO.OUT)
+    GPIO.setup(feedenable, GPIO.OUT)
     GPIO.setup(feeddir, GPIO.OUT)
     GPIO.setup(feedstep, GPIO.OUT)
 
@@ -34,7 +34,7 @@ def main():
     
     # Set Feed direction
     GPIO.output(feeddir, GPIO.LOW)
-
+    print("test")
     """if(len(sys.argv) != 2):
         return 2
 
@@ -49,7 +49,7 @@ def main():
     else:
         return 0"""
     feed(10)
-    linear(30, linearright)
+    linear(3000, linearright)
     return 0
 
     
@@ -66,22 +66,22 @@ def feed(steps):
     for i in range(steps):
         GPIO.output(feedstep, GPIO.HIGH)
         time.sleep(0.025)
-        GPIO.output(feedsteps, GPIO.LOW)
+        GPIO.output(feedstep, GPIO.LOW)
         time.sleep(0.025)
 
 def linear(steps, direction):
     GPIO.output(lineardir, direction)
     for i in range(steps):
         GPIO.output(linearstep, GPIO.HIGH)
-        time.sleep(0.001)
+        time.sleep(0.0004)
         GPIO.output(linearstep, GPIO.LOW)
-        time.sleep(0.001)
+        time.sleep(0.0004)
 
 if(__name__ == "__main__"):
     try:
         main()
     except:
-        pass
+        print(sys.exc_info()[0])
     GPIO.setmode(GPIO.BOARD)
     GPIO.cleanup()
  
