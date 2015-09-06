@@ -18,9 +18,8 @@ linewidth = 2   # in feed-steps
 maxaspect = 1.4   # height/width
 
 # Servo defs
-servopin = 0
-servo = GPIO.PWM(servopin, 50)  # 50Hz
-
+servopin = 12
+servo = None	# Declare as global variable
 
 
 def main():
@@ -40,7 +39,10 @@ def main():
     
     # Set Feed direction
     GPIO.output(feeddir, GPIO.LOW)
-    print("test")
+    
+    # Start servo PWM
+    servo = GPIO.PWM(servopin, 50)  # 50Hz
+
     """if(len(sys.argv) != 2):
         return 2
 
@@ -85,13 +87,9 @@ def linear(steps, direction):
 
 def setservo(angle):
     angle = max(min(180, angle), 0)
-    print(angle)
 
 if(__name__ == "__main__"):
     try:
-        setservo(50)
-        setservo(-30)
-        setservo(190)
         main()
     except:
         print(sys.exc_info()[0])
