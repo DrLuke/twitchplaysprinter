@@ -17,6 +17,7 @@ class bot:
     
     def adddrawarray(self, array, username):
         """ Saves an array which shall be drawn later """
+	print(array)
         numpy.save("".join(["new/", str(bot.sequentialfileid), "_", username]), array)
         bot.sequentialfileid += 1
 
@@ -30,12 +31,13 @@ class bot:
             # Find all the individual rows of matrix
             rows = re.findall("(\[[0-9,]*\])",match.group(1))
             for row in rows:
-                rowpixels = re.findall("([1-9]+(?=\,|\]))", row)
+                rowpixels = re.findall("([0-9]+(?=\,|\]))", row)
                 rowlist.append(rowpixels)
 
             # Determine the longest row
             matn = max(len(p) for p in rowlist)
        
+	    print(rowlist)
             # Pad too short rows with zeros
             for row in rowlist:
                 while(len(row) < matn):
@@ -83,8 +85,8 @@ class bot:
             retfile = fn
             break
 
-        if(retfile[0]):
-            return retfile[0]
-        else:
-            return None
-
+	try:
+	    returnfile = retfile[0]
+	    return returnfile
+        except:
+ 	    return None        
