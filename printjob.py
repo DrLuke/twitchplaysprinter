@@ -24,8 +24,13 @@ def main():
     GPIO.setup(feeddir, GPIO.OUT)
     GPIO.setup(feedstep, GPIO.OUT)
 
+    GPIO.setup(linearenable, GPIO.OUT)
+    GPIO.setup(lineardir, GPIO.OUT)
+    GPIO.setup(linearstep, GPIO.OUT)
+
     # Enable Stepper drivers
     GPIO.output(feedenable, GPIO.LOW)
+    GPIO.output(linearenable, GPIO.LOW)
     
     # Set Feed direction
     GPIO.output(feeddir, GPIO.LOW)
@@ -42,6 +47,8 @@ def main():
     if(processjob(job)):
         return 1
     else:
+        feed(10)
+        linear(30, linearright)
         return 0
 
     
