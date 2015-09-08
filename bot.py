@@ -31,7 +31,8 @@ class bot:
             # Find all the individual rows of matrix
             rows = re.findall("(\[[0-9,]*\])",match.group(1))
             for row in rows:
-                rowpixels = re.findall("([0-9]+(?=\,|\]))", row)
+                rowpixels = re.findall("([0-1])", row)
+		print(rowpixels)
                 rowlist.append(rowpixels)
 
             # Determine the longest row
@@ -42,7 +43,7 @@ class bot:
             for row in rowlist:
                 while(len(row) < matn):
                     row.append(0)
-            return numpy.array(rowlist)
+            return numpy.flipud(numpy.array(rowlist))
         else:
             return None
 
@@ -68,7 +69,7 @@ class bot:
         helpdict = {}
         helpdict["default"] = "Write \"!command <arguments>\" to send commands to the printer. For a list of available commands, write \"!help commands\". For help with each commands, type \"!help <commandname>\"."
         helpdict["commands"] = "draw - help"
-        helpdict["draw"] = "Draw an image supplied in form of a matrix. Each bracket contains a single row with 0 and 1 as pixel values. Syntax: \"!draw <matrix>\" Example: !draw [[1,0,1,0,1],[1,1,1,0,1],[1,0,1,0,1]]. You can use any dimensions you like, the image will be autoscaled."
+        helpdict["draw"] = "Draw an image supplied in form of a matrix. Each bracket contains a single row with 0 and 1 as pixel values. Syntax: \"!draw <matrix>\" Example: !draw [[10101],[11101],[10101]] will print 'HI'. You can use any dimensions you like, the image will be autoscaled."
         helpdict["help"] = "No eastereggs here"
         helpdict["easteregg"] = "I lied"
         helpdict["dickbutt"] = "Dickbutts galore!"

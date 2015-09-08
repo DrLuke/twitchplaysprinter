@@ -17,8 +17,8 @@ stepintegrator = 0
 # Printig defs
 linewidth = 2   # in feed-steps
 maxaspect = 1.4   # height/width
-maxpixelwidth = 500	# in linear-steps
-paperwidth = 7000	# in linear-steps
+maxpixelwidth = 1000	# in linear-steps
+paperwidth = 20000	# in linear-steps
 
 # Servo defs
 servopin = 26
@@ -46,9 +46,7 @@ def main():
     
     # Set Feed direction
     GPIO.output(feeddir, GPIO.HIGH)
-    
-    # Start servo PWM
-   
+
     if(len(sys.argv) != 2):
         return 2
     
@@ -84,9 +82,9 @@ def processjob(job):
     ylen = job.shape[0]
     print("xlen: " + str(xlen))
     pixelwidth = min(maxpixelwidth, paperwidth/xlen)
-    pixelheight = min(1,int(pixelwidth/100))
+    pixelheight = max(1,int(pixelwidth/100))
     print("Pixelwidth: " + str(pixelwidth))
-    numpy.flipud(job)
+    #numpy.flipud(job)
 
     if(ylen/xlen > maxaspect):
 	print("ylen/xlen: " + str(ylen/xlen))
@@ -100,15 +98,15 @@ def processjob(job):
     if(stepintegrator > 0):
 	linear(stepintegrator, linearleft)
 
-    feed(20)
+    for i in range(40):
+    	feed(2)
+	time.sleep(0.05)
 
     return 0
 
 def printrow(row, pixelsize):
     global stepintegrator
-    servo = GPIO.PWM(servopin, 100.0)  # 50Hz
-    servo.start(servoup)
-  
+    
     # Move to starting position
     startpos = paperwidth/2 - (len(row)*pixelsize)/2
     if(stepintegrator > startpos):
@@ -120,6 +118,9 @@ def printrow(row, pixelsize):
     else:
         print("Already at startposition!")
     
+    servo = GPIO.PWM(servopin, 100.0)  # 50Hz
+    servo.start(servoup)
+
     for pixel in row:
         if(int(pixel) == 1):
     	    servo.ChangeDutyCycle(servodown)
@@ -127,15 +128,18 @@ def printrow(row, pixelsize):
 	    servo.ChangeDutyCycle(servoup)
 	linear(pixelsize, linearright)
 	stepintegrator += pixelsize
+    # Safely reset servo and give it some time
+    servo.ChangeDutyCycle(servoup)
+    time.sleep(0.6)
     servo.stop()
     feed(linewidth)
    
 def feed(steps):
     for i in range(steps):
         GPIO.output(feedstep, GPIO.HIGH)
-        time.sleep(0.025)
+        time.sleep(0.05)
         GPIO.output(feedstep, GPIO.LOW)
-        time.sleep(0.025)
+        time.sleep(0.05)
 
 def linear(steps, direction):
     GPIO.output(lineardir, direction)

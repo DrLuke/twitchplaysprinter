@@ -10,12 +10,11 @@ class printer:
         if self.currentjob is None:
                 self.currentjob = self.bot.getjob()
                 if self.currentjob is not None:
-                    if(not self.startjob(self.currentjob)):
-                        pass # Move Jobfile from new/ to old/
+                    if(self.startjob(self.currentjob)):
+                        pass # Move Jobfile from new/ to error/
         else:
             if self.subprocess is not None:
                 self.subprocess.poll()
-                print(bytes.decode(self.subprocess.stdout.read()))
                 if self.subprocess.returncode is not None:
                     print(self.subprocess.returncode)
                     if(self.subprocess.returncode == 0):
