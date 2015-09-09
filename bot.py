@@ -6,6 +6,15 @@ class bot:
     def __init__(self,irc):
         self.irc = irc 
         self.determinehighestseqnum()
+        
+        # Fill queue with all outstanding files
+        self.queue = []
+        
+        for (dirp, dirn, fn) in os.walk("new"):
+            self.queue = fn
+            break
+        self.queue.sort()
+        print(self.queue)
 
     def drawmatrixcallback(self, args):
 
@@ -27,7 +36,9 @@ class bot:
     
     def adddrawarray(self, array, username):
         """ Saves an array which shall be drawn later """
-        numpy.save("".join(["new/", str(bot.sequentialfileid), "_", username]), array)
+        filename = "".join(["new/", str(bot.sequentialfileid), "_", username])
+        numpy.save(filename, array)
+        self.irc.sendmsg("".join(["@", username, ": Success. Your image is called \'", str(bot.sequentialfileid), "_", username, "' and is number ", str(self.addtoqueue(filename)), " in the queue."]))
         bot.sequentialfileid += 1
 
     def parsematrix(self, matrix):
@@ -85,7 +96,6 @@ class bot:
            
             # Find all-zero columns on left edge of matrix
             for pos in range(len(rows[0])):
-                print(rows)
                 if(all([x[pos] == '0' for x in rows])):
                     for x in rows:
                         x[pos] = None
@@ -104,7 +114,6 @@ class bot:
             for pos in range(len(rows)):
                 rows[pos] = [x for x in rows[pos] if x is not None]
             
-
             # Create numpy matrix from list
             return numpy.flipud(numpy.array(rows))
         else:
@@ -143,14 +152,14 @@ class bot:
         except:
             self.irc.sendmsg("".join(["@", args[1], ": ", helpdict["default"]]))
 
-    def getjob(self):
-        retfile = []
-        for (dirp, dirn, fn) in os.walk("new"):
-            retfile = fn
-            break
+    def getjob(self): 
+        if(self.queue):
+            return self.queue.pop(0)
+        else:
+            return None
 
-        try:
-            returnfile = retfile[0]
-            return returnfile
-        except:
-            return None        
+    def addtoqueue(self, filename):
+        self.queue.append(filename)
+
+        return len(self.queue)
+        

@@ -1,4 +1,4 @@
-import numpy, subprocess, os
+import numpy, subprocess, os, re
 
 class printer:
 
@@ -12,6 +12,10 @@ class printer:
                 if self.currentjob is not None:
                     if(self.startjob(self.currentjob)):
                         pass # Move Jobfile from new/ to error/
+                    else:
+                        match = re.search("[\d]+_(.*)\.npy",self.currentjob)
+                        if(match):
+                            self.bot.irc.sendmsg("".join(["@", match.group(0), ": Your image ",self.currentjob, " is being printed next."]))
         else:
             if self.subprocess is not None:
                 self.subprocess.poll()
@@ -19,10 +23,16 @@ class printer:
                     print(self.subprocess.returncode)
                     if(self.subprocess.returncode == 0):
                         os.rename("new/"+self.currentjob, "old/"+self.currentjob)
-                        # Move jobfile from new/ to old/
+                        match = re.search("[\d]+_(.*)\.npy",self.currentjob)
+                        if(match):
+                            self.bot.irc.sendmsg("".join(["@", match.group(0), ": Your image is done printing!"]))
+
                     elif(self.subprocess.returncode == 1):
                         os.rename("new/"+self.currentjob, "error/"+self.currentjob)
-                        # Move jobfile from new/ to error/
+                        match = re.search("[\d]+_(.*)\.npy",self.currentjob)
+                        if(match):
+                            self.bot.irc.sendmsg("".join(["@", match.group(0), ": There was an error with your image ",self.currentjob, ". It won't be printed :("]))
+
                     else:
                         print("Unknown return code: " + str(self.currentjob.returncode))
                     self.currentjob = None
