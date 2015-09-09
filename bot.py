@@ -14,10 +14,19 @@ class bot:
             self.adddrawarray(drawarray, args[1])
         else:
             self.irc.sendmsg("".join(["@", args[1], ": Invalid matrix format. See !help draw"]))
+
+    def drawhexcallback(self, args):
+        if(len(args) > 2):
+            return
+        
+        match = re.findall("([0-9A-F]+)", args[0][1])
+        if(match):
+            matrix = self.parsehex(match)
+            if(matrix is not None):
+                self.adddrawarray(matrix, args[1])
     
     def adddrawarray(self, array, username):
         """ Saves an array which shall be drawn later """
-	print(array)
         numpy.save("".join(["new/", str(bot.sequentialfileid), "_", username]), array)
         bot.sequentialfileid += 1
 
@@ -32,18 +41,72 @@ class bot:
             rows = re.findall("(\[[0-9,]*\])",match.group(1))
             for row in rows:
                 rowpixels = re.findall("([0-1])", row)
-		print(rowpixels)
                 rowlist.append(rowpixels)
 
             # Determine the longest row
             matn = max(len(p) for p in rowlist)
        
-	    print(rowlist)
             # Pad too short rows with zeros
             for row in rowlist:
                 while(len(row) < matn):
                     row.append(0)
             return numpy.flipud(numpy.array(rowlist))
+        else:
+            return None
+
+    def parsehex(self, args):
+        # Check if all values are of same length
+        if(all(len(x) == len(args[0]) for x in args)):
+            # Clip off all leading all-zero elements
+            for x in range(len(args)):
+                if args[x] == len(args[x])*'0': # Check if entry is all zeros
+                    args[x] = None  # Remove the entry
+                else:
+                    break   # Stop at first non-zero entry
+            
+            # Clip off all trailing all-zero elements
+            for x in reversed(range(len(args))):
+                if args[x] == len(args[x])*'0': # Check if entry is all zeros
+                    args[x] = None  # Remove the entry
+                else:
+                    break   # Stop at first non-zero entry
+            
+            # Remove all None-elements
+            args = list(x for x in args if x is not None)
+
+            # Convert hexadecimal to binary for easier processing
+            for x in range(len(args)):
+                args[x] = bin(int(args[x], 16))[2:].zfill(len(args[x])*4)
+            
+            # Split string into list of pixel values
+            rows = list(args)
+            for x in range(len(args)):
+                rows[x] = re.findall("[01]",args[x])
+           
+            # Find all-zero columns on left edge of matrix
+            for pos in range(len(rows[0])):
+                print(rows)
+                if(all([x[pos] == '0' for x in rows])):
+                    for x in rows:
+                        x[pos] = None
+                else:
+                    break
+            
+            # Find all-zero columns on right edge of matrix
+            for pos in reversed(range(len(rows[0]))):
+                if(all([x[pos] == '0' for x in rows])):
+                    for x in rows:
+                        x[pos] = None
+                else:
+                    break
+           
+            # Remove all None-Elements
+            for pos in range(len(rows)):
+                rows[pos] = [x for x in rows[pos] if x is not None]
+            
+
+            # Create numpy matrix from list
+            return numpy.flipud(numpy.array(rows))
         else:
             return None
 
@@ -86,8 +149,8 @@ class bot:
             retfile = fn
             break
 
-	try:
-	    returnfile = retfile[0]
-	    return returnfile
+        try:
+            returnfile = retfile[0]
+            return returnfile
         except:
- 	    return None        
+            return None        

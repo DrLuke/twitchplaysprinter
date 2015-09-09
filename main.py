@@ -11,6 +11,7 @@ def main():
 
     irc.addcommand(uguu.drawmatrixcallback, "draw")
     irc.addcommand(uguu.helpcallback, "help")
+    irc.addcommand(uguu.drawhexcallback, "hex")
 
     while(1):
         irc.parse(bytes.decode(irc.recv()))
