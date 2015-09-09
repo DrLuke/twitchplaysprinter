@@ -17,7 +17,7 @@ stepintegrator = 0
 # Printig defs
 linewidth = 2   # in feed-steps
 maxaspect = 1.4   # height/width
-maxpixelwidth = 1000	# in linear-steps
+maxpixelwidth = 500	# in linear-steps
 paperwidth = 20000	# in linear-steps
 
 # Servo defs
