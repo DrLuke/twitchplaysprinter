@@ -14,7 +14,6 @@ class bot:
             self.queue = fn
             break
         self.queue.sort()
-        print(self.queue)
 
     def drawmatrixcallback(self, args):
 
@@ -145,6 +144,8 @@ class bot:
         helpdict["help"] = "No eastereggs here"
         helpdict["easteregg"] = "I lied"
         helpdict["dickbutt"] = "Dickbutts galore!"
+        helpdict["hex"] = "Go to www.lukasj.space and draw your image. If you are interested in the data format, try !help hexformat."
+        helpdict["hexformat"] = "The hex format uses hexadecimal numbers to represent the pixel of the image. Each hexadecimal number represents one line of the image. When you convert this hexadecimal to a binary number, the least significant bit represents the rightmost pixel of the line. All lines must be of equal length, otherwise the parser will reject it."
         
 
         try:
