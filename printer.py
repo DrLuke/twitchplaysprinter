@@ -15,7 +15,7 @@ class printer:
                     else:
                         match = re.search("[\d]+_(.*)\.npy",self.currentjob)
                         if(match):
-                            self.bot.irc.sendmsg("".join(["@", match.group(0), ": Your image ",self.currentjob, " is being printed next."]))
+                            self.bot.irc.sendmsg("".join(["@", match.group(1), ": Your image ",self.currentjob, " is being printed next."]))
         else:
             if self.subprocess is not None:
                 self.subprocess.poll()
@@ -25,13 +25,13 @@ class printer:
                         os.rename("new/"+self.currentjob, "old/"+self.currentjob)
                         match = re.search("[\d]+_(.*)\.npy",self.currentjob)
                         if(match):
-                            self.bot.irc.sendmsg("".join(["@", match.group(0), ": Your image is done printing!"]))
+                            self.bot.irc.sendmsg("".join(["@", match.group(1), ": Your image is done printing!"]))
 
                     elif(self.subprocess.returncode == 1):
                         os.rename("new/"+self.currentjob, "error/"+self.currentjob)
                         match = re.search("[\d]+_(.*)\.npy",self.currentjob)
                         if(match):
-                            self.bot.irc.sendmsg("".join(["@", match.group(0), ": There was an error with your image ",self.currentjob, ". It won't be printed :("]))
+                            self.bot.irc.sendmsg("".join(["@", match.group(1), ": There was an error with your image ",self.currentjob, ". It won't be printed :("]))
 
                     else:
                         print("Unknown return code: " + str(self.currentjob.returncode))
