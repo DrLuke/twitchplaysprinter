@@ -1,5 +1,5 @@
 import time
-import import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
 __author__ = 'drluke'
 
