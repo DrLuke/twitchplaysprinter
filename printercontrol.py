@@ -61,7 +61,7 @@ class printercontrols:
                         self.linearStepIntegrator += 1
                         GPIO.output(self.linearStep, GPIO.HIGH)
                         time.sleep(0.0004)
-                        GPIO.output(self.linearStep, GPIO.HIGH)
+                        GPIO.output(self.linearStep, GPIO.LOW)
                         time.sleep(0.0004)
                     else:
                         print("Reached linear positive limit!")
