@@ -23,20 +23,19 @@ def main():
         getch = _GetchUnix()
         char = getch()
 
-        print(char)
         if char is "\x03":
             print("Exiting...")
             sys.exit(0)
-        elif char is "d":
+        elif char is "\x100":
             print("Right 100")
             p.moveLinear(p.linearRight, 100)
-        elif char is "D":
+        elif char is "\x68":
             print("Right 1000")
             p.moveLinear(p.linearRight, 1000)
-        elif char is "a":
+        elif char is "\x97":
             print("Left 100")
             p.moveLinear(p.linearLeft, 100)
-        elif char is "A":
+        elif char is "\x65":
             print("Left 1000")
             p.moveLinear(p.linearLeft, 1000)
 
