@@ -26,11 +26,12 @@ def main():
 
     p = printercontrol.printercontrols()
     p.homed = True
+    p.linearStepIntegrator = 1000
 
     if args.linear > 0:
         p.moveLinear(p.linearRight, args.linear)
     elif args.linear < 0:
-        p.moveLinear(p.linearLeft, args.linear)
+        p.moveLinear(p.linearLeft, -args.linear)
 
     if args.feed > 0:
         p.moveFeed(args.feed)

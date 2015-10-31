@@ -55,7 +55,9 @@ class printercontrols:
                         time.sleep(0.0004)
                         GPIO.output(self.linearStep, GPIO.LOW)
                         time.sleep(0.0004)
+                    else:
                         print("Reached linear negative limit!")
+                        break
                 elif dir == self.linearRight:
                     if self.linearStepIntegrator < self.paperWidth:
                         self.linearStepIntegrator += 1
@@ -65,6 +67,7 @@ class printercontrols:
                         time.sleep(0.0004)
                     else:
                         print("Reached linear positive limit!")
+                        break
 
         else:
             print("Not yet homed")
