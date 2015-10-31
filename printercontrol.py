@@ -44,6 +44,8 @@ class printercontrols:
         GPIO.output(self.feedEnable, GPIO.LOW)
         GPIO.output(self.linearEnable, GPIO.LOW)
 
+        GPIO.output(self.feedDir, GPIO.HIGH)
+
     def moveLinear(self, dir, steps):
         if self.homed:
             GPIO.output(self.linearDir, dir)
