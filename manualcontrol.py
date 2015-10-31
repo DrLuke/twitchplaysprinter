@@ -1,4 +1,6 @@
 import time, printercontrol, sys
+import argparse
+
 
 class _GetchUnix:
     def __init__(self):
@@ -16,32 +18,22 @@ class _GetchUnix:
         return ch
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-l", "--linear", help="Amount to move on linear axis", default=0, type=int)
+    parser.add_argument("-f", "--feed", help="Amount to move on feed axis", default=0, type=int)
+
+    args = parser.parse_args()
+
     p = printercontrol.printercontrols()
     p.homed = True
 
-    while(1):
-        getch = _GetchUnix()
-        char = getch()
+    if args.linear > 0:
+        p.moveLinear(p.linearRight, args.linear)
+    elif args.linear < 0:
+        p.moveLinear(p.linearLeft, args.linear)
 
-        print(str.encode(char))
-        if str(char) is "\x03":
-            print("Exiting...")
-            sys.exit(0)
-        elif char == 100:
-            print("Right 100")
-            p.moveLinear(p.linearRight, 100)
-        elif char == 68:
-            print("Right 1000")
-            p.moveLinear(p.linearRight, 1000)
-        elif char == 97:
-            print("Left 100")
-            p.moveLinear(p.linearLeft, 100)
-        elif char == 65:
-            print("Left 1000")
-            p.moveLinear(p.linearLeft, 1000)
-
-
-
+    if args.feed > 0:
+        p.moveFeed(args.feed)
 
 if __name__ == "__main__":
     main()
