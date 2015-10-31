@@ -52,7 +52,7 @@ class printercontrols:
             GPIO.output(self.linearDir, dir)
             for i in range(steps):
                 if dir == self.linearLeft:
-                    if self.linearStepIntegrator > 0 and not self.ignoreIntegrator:
+                    if self.linearStepIntegrator > 0 or not self.ignoreIntegrator:
                         self.linearStepIntegrator -= 1
                         GPIO.output(self.linearStep, GPIO.HIGH)
                         time.sleep(0.0004)
@@ -62,7 +62,7 @@ class printercontrols:
                         print("Reached linear negative limit!")
                         break
                 elif dir == self.linearRight:
-                    if self.linearStepIntegrator < self.paperWidth and not self.ignoreIntegrator:
+                    if self.linearStepIntegrator < self.paperWidth or not self.ignoreIntegrator:
                         self.linearStepIntegrator += 1
                         GPIO.output(self.linearStep, GPIO.HIGH)
                         time.sleep(0.0004)
