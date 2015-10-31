@@ -24,7 +24,7 @@ def main():
         char = getch()
 
         print(str.encode(char))
-        if char == 3:
+        if str(char) is "\x03":
             print("Exiting...")
             sys.exit(0)
         elif char == 100:
