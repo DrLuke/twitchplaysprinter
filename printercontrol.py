@@ -41,6 +41,7 @@ class printercontrols:
         GPIO.setup(self.feedStep, GPIO.OUT)
 
         GPIO.setup(self.servoPin, GPIO.OUT)
+        self.servo = GPIO.PWM(servopin, 100.0) # 50Hz
 
         GPIO.output(self.feedEnable, GPIO.LOW)
         GPIO.output(self.linearEnable, GPIO.LOW)
@@ -84,6 +85,13 @@ class printercontrols:
                 time.sleep(0.05)
         else:
             print("Not yet homed")
+
+    def positionServo(self, position, stopservo):
+        if stopservo:
+            self.servo.stop()
+        else:
+            self.servo.start(position)
+
 
     def __del__(self):
         GPIO.cleanup()
