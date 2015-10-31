@@ -21,6 +21,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--linear", help="Amount to move on linear axis", default=0, type=int)
     parser.add_argument("-f", "--feed", help="Amount to move on feed axis", default=0, type=int)
+    parser.add_argument("-s", "--servo", help="Amount to move on feed axis", default="", type=str)
+
 
     args = parser.parse_args()
 
@@ -36,12 +38,12 @@ def main():
     if args.feed > 0:
         p.moveFeed(args.feed)
 
-    p.positionServo(p.servoDown)
-    time.sleep(1)
-    p.positionServo(p.servoDown)
-    time.sleep(1)
-    p.positionServo(p.servoDown, True)
-    time.sleep(1)
+    if args.servo is "up":
+        p.positionServo(p.servoUp)
+        time.sleep(1)
+    elif args.servo is "down":
+        p.positionServo(p.servoDown)
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()

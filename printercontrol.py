@@ -91,6 +91,7 @@ class printercontrols:
             self.servo.stop()
         else:
             self.servo.start(position)
+            self.servo.ChangeDutyCycle(position)
 
 
     def __del__(self):
