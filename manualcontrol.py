@@ -23,6 +23,7 @@ def main():
         getch = _GetchUnix()
         char = getch()
 
+        print(str.encode(char))
         if char == 3:
             print("Exiting...")
             sys.exit(0)
