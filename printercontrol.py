@@ -48,6 +48,9 @@ class printercontrols:
 
         GPIO.output(self.feedDir, GPIO.HIGH)
 
+    def home(self):
+        self.homed = True # FIXME: Add code to actually home in the linear axis!
+
     def moveLinear(self, dir, steps):
         if self.homed:
             GPIO.output(self.linearDir, dir)
