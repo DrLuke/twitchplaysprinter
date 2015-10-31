@@ -22,10 +22,10 @@ def main():
     if args.feed > 0:
         p.moveFeed(args.feed)
 
-    if args.servo is "up":
+    if args.servo == "up":
         p.positionServo(p.servoUp)
         time.sleep(1)
-    elif args.servo is "down":
+    elif args.servo == "down":
         p.positionServo(p.servoDown)
         time.sleep(1)
 
