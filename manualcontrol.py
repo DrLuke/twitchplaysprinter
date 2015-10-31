@@ -26,7 +26,7 @@ def main():
 
     p = printercontrol.printercontrols()
     p.homed = True
-    p.linearStepIntegrator = 1000
+    p.ignoreIntegrator = True
 
     if args.linear > 0:
         p.moveLinear(p.linearRight, args.linear)
