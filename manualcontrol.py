@@ -36,6 +36,13 @@ def main():
     if args.feed > 0:
         p.moveFeed(args.feed)
 
+    p.positionServo(p.servoDown)
+    time.sleep(1)
+    p.positionServo(p.servoDown)
+    time.sleep(1)
+    p.positionServo(p.servoDown, True)
+    time.sleep(1)
+
 if __name__ == "__main__":
     main()
 

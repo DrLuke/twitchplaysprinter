@@ -86,7 +86,7 @@ class printercontrols:
         else:
             print("Not yet homed")
 
-    def positionServo(self, position, stopservo):
+    def positionServo(self, position, stopservo=False):
         if stopservo:
             self.servo.stop()
         else:
