@@ -1,20 +1,6 @@
 #!/usr/bin/python3
 
-import RPi.GPIO as GPIO
-import sys, numpy, os, time, signal
-
-# Pin numbers for paper feed
-feedenable = 7
-feeddir = 11
-feedstep = 13
-
-# Defs for drawing axis
-linearenable = 15
-lineardir = 12
-linearstep = 16
-linearleft = GPIO.LOW
-linearright = GPIO.HIGH
-stepintegrator = 0
+import printercontrol, numpy, time
 
 # Printig defs
 linewidth = 2  # in feed-steps
@@ -22,63 +8,28 @@ maxaspect = 1.4  # height/width
 maxpixelwidth = 500  # in linear-steps
 paperwidth = 20000  # in linear-steps
 
-# Servo defs
-servopin = 26
-servodown = 28.0
-servoup = 15.0
-
-
 def main():
-    global stepintegrator
-    GPIO.setmode(GPIO.BOARD)
-    # Setup pins
-    GPIO.setup(feedenable, GPIO.OUT)
-    GPIO.setup(feeddir, GPIO.OUT)
-    GPIO.setup(feedstep, GPIO.OUT)
+    with open("printjob.log", "a") as logfile:
+        logfile.write("\r\n\r\n******************\r\nStarting program\r\n")
+        p = printercontrol.printercontrols()
 
-    GPIO.setup(linearenable, GPIO.OUT)
-    GPIO.setup(lineardir, GPIO.OUT)
-    GPIO.setup(linearstep, GPIO.OUT)
+        while(1):
+            newJobfile = getNewJob()
+            try:
+                job = numpy.load(newJobfile)
+            except IOError:
+                logfile.write("Error opening file: " + newJobfile + "\r\n")
 
-    GPIO.setup(servopin, GPIO.OUT)
+            print(job)
+            if (processjob(job, p)):
+                return 1
+            else:
+                return 0
 
-    # Enable Stepper drivers
-    GPIO.output(feedenable, GPIO.LOW)
-    GPIO.output(linearenable, GPIO.LOW)
+def getNewJob():
+    return "newjob" #FIXME: Actually get a new job
 
-    # Set Feed direction
-    GPIO.output(feeddir, GPIO.HIGH)
-
-    if (len(sys.argv) != 2):
-        return 2
-
-    # Open job file
-    job = numpy.load(sys.argv[1])
-    try:
-        job = numpy.load(sys.argv[1])
-    except IOError:
-        print("Couldn't open file")
-        return 2
-
-    print(job)
-    if (processjob(job)):
-        return 1
-    else:
-        return 0
-    # servo.ChangeDutyCycle(15.0)
-    # time.sleep(2)
-    # feed(10)
-    # servo.ChangeDutyCycle(30.0)
-    # linear(3000, linearleft)
-    # feed(10)
-    # linear(3000, linearleft)
-    # servo.ChangeDutyCycle(15.0)
-    # time.sleep(2)
-    return 0
-
-
-def processjob(job):
-    global stepintegrator
+def processjob(job, p):
 
     xlen = job.shape[1]
     ylen = job.shape[0]
@@ -94,68 +45,58 @@ def processjob(job):
 
     for row in job:
         for rep in range(pixelheight):
-            if (printrow(row, pixelwidth)):
+            if (printrow(row, pixelwidth, p)):
                 return 1
 
-    if (stepintegrator > 0):
-        linear(stepintegrator, linearleft)
-
     for i in range(40):
-        feed(2)
+        p.moveFeed(2)
         time.sleep(0.05)
 
     return 0
 
 
-def printrow(row, pixelsize):
+def printrow(row, pixelsize, p):
     global stepintegrator
 
-    # Move to starting position
-    startpos = paperwidth / 2 - (len(row) * pixelsize) / 2
-    if (stepintegrator > startpos):
-        linear(stepintegrator - startpos, linearleft)
-        stepintegrator -= stepintegrator - startpos
-    elif (stepintegrator < startpos):
-        linear(startpos - stepintegrator, linearright)
-        stepintegrator += startpos - stepintegrator
-    else:
-        print("Already at startposition!")
+    # # Move to starting position
+    # startpos = paperwidth / 2 - (len(row) * pixelsize) / 2
+    # if (stepintegrator > startpos):
+    #     linear(stepintegrator - startpos, linearleft)
+    #     stepintegrator -= stepintegrator - startpos
+    # elif (stepintegrator < startpos):
+    #     linear(startpos - stepintegrator, linearright)
+    #     stepintegrator += startpos - stepintegrator
+    # else:
+    #     print("Already at startposition!")
+    #
+    #
+    #
+    # for pixel in row:
+    #     if (int(pixel) == 1):
+    #         servo.ChangeDutyCycle(servodown)
+    #     else:
+    #         servo.ChangeDutyCycle(servoup)
+    #     linear(pixelsize, linearright)
+    #     stepintegrator += pixelsize
+    # # Safely reset servo and give it some time
+    # servo.ChangeDutyCycle(servoup)
+    # time.sleep(0.6)
+    # servo.stop()
+    # feed(linewidth)
 
-    servo = GPIO.PWM(servopin, 100.0)  # 50Hz
-    servo.start(servoup)
-
-    for pixel in row:
-        if (int(pixel) == 1):
-            servo.ChangeDutyCycle(servodown)
+    startpixel = 0
+    for pixel in line:
+        if int(pixel) == 0:
+            startpixel += 1
         else:
-            servo.ChangeDutyCycle(servoup)
-        linear(pixelsize, linearright)
-        stepintegrator += pixelsize
-    # Safely reset servo and give it some time
-    servo.ChangeDutyCycle(servoup)
-    time.sleep(0.6)
-    servo.stop()
-    feed(linewidth)
+            break
 
+    startposition = startpixel * pixelsize
 
-def feed(steps):
-    for i in range(steps):
-        GPIO.output(feedstep, GPIO.HIGH)
-        time.sleep(0.05)
-        GPIO.output(feedstep, GPIO.LOW)
-        time.sleep(0.05)
-
-
-def linear(steps, direction):
-    GPIO.output(lineardir, direction)
-    for i in range(steps):
-        GPIO.output(linearstep, GPIO.HIGH)
-        time.sleep(0.0004)
-        GPIO.output(linearstep, GPIO.LOW)
-        time.sleep(0.0004)
-
+    if p.linearStepIntegrator < startposition:
+        p.moveLinear(p.linearRight, startposition-p.linearStepIntegrator)
+    elif p.linearStepIntegrator > startposition:
+        p.moveLinear(p.linearLeft, p.linearStepIntegrator-startposition)
 
 if (__name__ == "__main__"):
     main()
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.cleanup()
