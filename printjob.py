@@ -27,7 +27,7 @@ def main():
                 return 0
 
 def getNewJob():
-    return "newjob" #FIXME: Actually get a new job
+    return "00_testfile.npy" #FIXME: Actually get a new job
 
 def processjob(job, p):
 
@@ -56,34 +56,6 @@ def processjob(job, p):
 
 
 def printrow(row, pixelsize, p):
-    global stepintegrator
-
-    # # Move to starting position
-    # startpos = paperwidth / 2 - (len(row) * pixelsize) / 2
-    # if (stepintegrator > startpos):
-    #     linear(stepintegrator - startpos, linearleft)
-    #     stepintegrator -= stepintegrator - startpos
-    # elif (stepintegrator < startpos):
-    #     linear(startpos - stepintegrator, linearright)
-    #     stepintegrator += startpos - stepintegrator
-    # else:
-    #     print("Already at startposition!")
-    #
-    #
-    #
-    # for pixel in row:
-    #     if (int(pixel) == 1):
-    #         servo.ChangeDutyCycle(servodown)
-    #     else:
-    #         servo.ChangeDutyCycle(servoup)
-    #     linear(pixelsize, linearright)
-    #     stepintegrator += pixelsize
-    # # Safely reset servo and give it some time
-    # servo.ChangeDutyCycle(servoup)
-    # time.sleep(0.6)
-    # servo.stop()
-    # feed(linewidth)
-
     startpixel = 0
     for pixel in line:
         if int(pixel) == 0:
@@ -97,6 +69,29 @@ def printrow(row, pixelsize, p):
         p.moveLinear(p.linearRight, startposition-p.linearStepIntegrator)
     elif p.linearStepIntegrator > startposition:
         p.moveLinear(p.linearLeft, p.linearStepIntegrator-startposition)
+
+    endpixel = len(row)
+
+    for i in range(startpixel, len(row)):
+        if int(row[i]) == 1:
+            p.positionServo(p.servoDown)
+        else:
+            p.positionServo(p.servoUp)
+        p.moveLinear(p.linearRight, pixelsize)
+        if all([int(a) for a in row[i:]]):
+            endpixel = i
+            break
+
+    p.moveFeed(linewidth)
+
+    for i in range(startpixel, endpixel):
+        if int(row[endpixel-i]) == 1:
+            p.positionServo(p.servoDown)
+        else:
+            p.positionServo(p.servoUp)
+        p.moveLinear(p.linearLeft, pixelsize)
+
+    p.moveFeed(linewidth)
 
 if (__name__ == "__main__"):
     main()
