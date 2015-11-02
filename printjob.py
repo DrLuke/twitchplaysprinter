@@ -76,9 +76,9 @@ def printrow(row, pixelsize, p):
             p.positionServo(p.servoDown)
         else:
             p.positionServo(p.servoUp)
-        p.moveLinear(p.linearRight, pixelsize)
         if all([int(a) == 0 for a in row[i:]]):
             break
+        p.moveLinear(p.linearRight, pixelsize)
 
     p.positionServo(p.servoUp)
     time.sleep(0.5)
