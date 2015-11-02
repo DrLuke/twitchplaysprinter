@@ -81,7 +81,7 @@ def printrow(row, pixelsize, p):
         p.moveLinear(p.linearRight, pixelsize)
 
     p.positionServo(p.servoUp)
-    time.sleep(0.5)
+    p.moveLinear(p.linearRight, 50)
 
     p.moveFeed(1)
 
