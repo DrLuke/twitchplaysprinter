@@ -57,7 +57,7 @@ def processjob(job, p):
 
 def printrow(row, pixelsize, p):
     startpixel = 0
-    for pixel in line:
+    for pixel in row:
         if int(pixel) == 0:
             startpixel += 1
         else:
