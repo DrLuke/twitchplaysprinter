@@ -12,6 +12,7 @@ def main():
     with open("printjob.log", "a") as logfile:
         logfile.write("\r\n\r\n******************\r\nStarting program\r\n")
         p = printercontrol.printercontrols()
+        p.home()
 
         while(1):
             newJobfile = getNewJob()
@@ -48,7 +49,7 @@ def processjob(job, p):
             if (printrow(row, pixelwidth, p)):
                 return 1
 
-    for i in range(40):
+    for i in range(5):
         p.moveFeed(2)
         time.sleep(0.05)
 
@@ -70,28 +71,19 @@ def printrow(row, pixelsize, p):
     elif p.linearStepIntegrator > startposition:
         p.moveLinear(p.linearLeft, p.linearStepIntegrator-startposition)
 
-    endpixel = len(row)
-
     for i in range(startpixel, len(row)):
         if int(row[i]) == 1:
             p.positionServo(p.servoDown)
         else:
             p.positionServo(p.servoUp)
         p.moveLinear(p.linearRight, pixelsize)
-        if all([int(a) for a in row[i:]]):
-            endpixel = i
+        if all([int(a) == 0 for a in row[i:]]):
             break
 
-    p.moveFeed(linewidth)
+    p.positionServo(p.servoUp)
+    time.sleep(0.5)
 
-    for i in range(startpixel, endpixel):
-        if int(row[endpixel-i]) == 1:
-            p.positionServo(p.servoDown)
-        else:
-            p.positionServo(p.servoUp)
-        p.moveLinear(p.linearLeft, pixelsize)
-
-    p.moveFeed(linewidth)
+    p.moveFeed(1)
 
 if (__name__ == "__main__"):
     main()
